@@ -1,14 +1,22 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import reportWebVitals from "./reportWebVitals";
+import ViewerTable from "containers/ViewerTable";
+
+import "antd/dist/antd.css";
+import GlobalStyle from "styles/GlobalStyles";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <GlobalStyle />
+    <Router>
+      <Routes>
+        <Route path="/" element={<ViewerTable />} />
+      </Routes>
+    </Router>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function

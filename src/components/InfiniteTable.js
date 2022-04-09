@@ -1,45 +1,76 @@
-import { useState } from "react";
-import { Table } from "antd";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+
+// components
+import { Table } from "antd";
+
+// style
+import TableStyle from "styles/TableStyle";
+
+// hook
 import { useVT } from "virtualizedtableforantd4";
 
-function InfiniteTable({ onFetch, dataSource, scroll, ...props }) {
-  const [page, setPage] = useState(1);
+function InfiniteTable({
+  columns,
+  dataSource,
+  total,
+  rowKey,
+  onScroll,
+  scroll,
+  loading,
+}) {
+  const [isContinue, setIsContinue] = useState(false);
+
+  useEffect(() => {
+    if (dataSource.length > 0) {
+      setIsContinue(dataSource.length < total);
+    }
+  }, [dataSource.length]);
 
   const [vt] = useVT(
     () => ({
       onScroll: ({ isEnd }) => {
-        if (isEnd) {
-          console.debug("loadDataByChunk");
-          onFetch(page + 1);
-          setPage(page + 1);
+        console.debug({ isContinue, isEnd });
+        if (isEnd && isContinue) {
+          onScroll(dataSource);
         }
       },
-      scroll: { y: 200 },
+      scroll,
     }),
-    [dataSource]
+    [dataSource, isContinue]
   );
 
   return (
-    <Table
-      {...props}
-      scroll={scroll}
-      dataSource={dataSource}
-      pagination={false}
-      components={vt}
-    />
+    <TableStyle>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        rowKey={rowKey}
+        components={vt}
+        loading={loading}
+        pagination={false}
+        scroll={scroll}
+        size="small"
+      />
+    </TableStyle>
   );
 }
 
 InfiniteTable.defaultProps = {
-  scroll: { y: 500 },
-  onFetch: () => {},
+  dataSource: [],
+  rowKey: "key",
+  onScroll: (record) => {},
+  loading: false,
 };
 
 InfiniteTable.propTypes = {
+  columns: PropTypes.arrayOf(PropTypes.object).isRequired,
+  dataSource: PropTypes.array,
+  total: PropTypes.number.isRequired,
+  rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+  onScroll: PropTypes.func,
+  loading: PropTypes.bool,
   scroll: PropTypes.object,
-  dataSource: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onFetch: PropTypes.func,
 };
 
 export default InfiniteTable;

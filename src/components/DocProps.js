@@ -117,11 +117,8 @@ const DocProps = () => {
   return (
     <>
       {data.findIndex((item) => item.required) > -1 && (
-        <Typography.Text
-          type="danger"
-          style={{ marginBottom: 10, fontSize: "12px" }}
-        >
-          * 표시는 필수 항목
+        <Typography.Text type="danger" className="required-explain">
+          Marked with * is required
         </Typography.Text>
       )}
       <TableStyle>

@@ -30,7 +30,6 @@ function InfiniteTable({
   const [vt] = useVT(
     () => ({
       onScroll: ({ isEnd }) => {
-        console.debug({ isContinue, isEnd });
         if (isEnd && isContinue) {
           onScroll(dataSource);
         }
